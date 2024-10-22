@@ -324,7 +324,7 @@ class APIBackend:
             )
 
             self.chat_model = LLM_SETTINGS.chat_model if chat_model is None else chat_model
-            self.encoder = tiktoken.encoding_for_model(self.chat_model)
+            self.encoder = tiktoken.encoding_for_model('gpt-4')
             self.chat_api_base = LLM_SETTINGS.chat_azure_api_base if chat_api_base is None else chat_api_base
             self.chat_api_version = (
                 LLM_SETTINGS.chat_azure_api_version if chat_api_version is None else chat_api_version
@@ -372,8 +372,9 @@ class APIBackend:
                         azure_endpoint=self.embedding_api_base,
                     )
             else:
-                self.chat_client = openai.OpenAI(api_key=self.chat_api_key)
-                self.embedding_client = openai.OpenAI(api_key=self.embedding_api_key)
+                # set base url for openai
+                self.chat_client = openai.OpenAI(api_key=self.chat_api_key, base_url=self.chat_api_base)
+                self.embedding_client = openai.OpenAI(api_key=self.embedding_api_key, base_url=self.embedding_api_base)
 
         self.dump_chat_cache = LLM_SETTINGS.dump_chat_cache if dump_chat_cache is None else dump_chat_cache
         self.use_chat_cache = LLM_SETTINGS.use_chat_cache if use_chat_cache is None else use_chat_cache
